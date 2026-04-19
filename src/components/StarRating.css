@@ -1,0 +1,30 @@
+.star-rating {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.star-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  padding: 0;
+  display: flex;
+}
+
+.star-btn:disabled {
+  cursor: default;
+}
+
+.star-btn.active {
+  color: var(--accent-primary);
+  transform: scale(1.1);
+}
+
+.star-btn:not(:disabled):hover {
+  color: var(--accent-hover);
+  transform: scale(1.2);
+}
