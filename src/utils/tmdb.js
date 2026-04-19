@@ -17,8 +17,9 @@ export const tmdbApi = {
   getTrending: () => api.get('/trending/movie/week'),
   getPopular: () => api.get('/movie/popular'),
   getTopRated: () => api.get('/movie/top_rated'),
-  searchMovies: (query) => api.get('/search/movie', { params: { query } }),
+  searchMulti: (query) => api.get('/search/multi', { params: { query } }),
   getMovieDetails: (id) => api.get(`/movie/${id}`, { params: { append_to_response: 'credits,videos' } }),
+  getTvDetails: (id) => api.get(`/tv/${id}`, { params: { append_to_response: 'credits,videos' } }),
 };
 
 export const getImageUrl = (path, size = 'w500') => {

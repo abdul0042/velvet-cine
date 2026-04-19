@@ -173,6 +173,65 @@
   display: none;
 }
 
+/* Navbar Search Styles */
+.navbar-search {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 2rem;
+  transition: all var(--transition-normal);
+}
+
+.navbar-search .search-input-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  height: 40px;
+  margin: 0;
+}
+
+.navbar-search .search-input-wrapper:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+.clear-search {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 4px;
+  margin-right: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-search:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.mobile-search-trigger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.close-mobile-search {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .navbar-search {
+    margin: 0 1rem;
+    max-width: 350px;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-text, .desktop-username {
     display: none;
@@ -206,5 +265,46 @@
     left: auto;
     width: 200px;
     margin-top: 0;
+  }
+
+  .navbar-search {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: var(--bg-primary);
+    z-index: 150;
+    margin: 0;
+    max-width: none;
+    padding: 0 1rem;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .navbar-search.mobile-show {
+    display: flex;
+  }
+
+  .navbar-search .search-input-wrapper {
+    flex: 1;
+    height: 44px;
+    border: none;
+    background: transparent;
+  }
+
+  .mobile-search-trigger {
+    display: flex;
+    align-items: center;
+  }
+
+  .close-mobile-search {
+    display: flex;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
   }
 }

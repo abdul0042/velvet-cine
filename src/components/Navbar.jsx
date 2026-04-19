@@ -1,18 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Film, BookmarkPlus, CheckCircle2, User, LogOut, Library } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Film, BookmarkPlus, CheckCircle2, User, LogOut, Library, Search, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useSearch } from '../context/SearchContext';
 import './Navbar.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { searchQuery, setSearchQuery } = useSearch();
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
-  
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
   const profileRef = useRef();
   const libraryRef = useRef();
+  const searchBarRef = useRef();
 
+  
   // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -26,6 +33,14 @@ const Navbar = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    if (val.length > 0 && location.pathname !== '/') {
+      navigate('/');
+    }
+  };
 
   // Close dropdowns on route change
   useEffect(() => {
@@ -42,9 +57,37 @@ const Navbar = () => {
           <Film className="brand-icon" size={28} />
           <span>Velvet</span>
         </Link>
+
+        {/* Global Search Bar */}
+        <div className={`navbar-search ${isMobileSearchOpen ? 'mobile-show' : ''}`} ref={searchBarRef}>
+          <div className="search-input-wrapper">
+            <Search className="search-icon" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search movies, series, anime..." 
+              className="search-input"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            {searchQuery && (
+              <button className="clear-search" onClick={() => setSearchQuery('')}>
+                <X size={14} />
+              </button>
+            )}
+          </div>
+          <button className="close-mobile-search" onClick={() => setIsMobileSearchOpen(false)}>
+            <X size={20} />
+          </button>
+        </div>
         
         <div className="navbar-end">
-          
+          <button 
+            className="mobile-search-trigger" 
+            onClick={() => setIsMobileSearchOpen(true)}
+            aria-label="Search"
+          >
+            <Search size={22} />
+          </button>
           {user && (
             <div 
               className="nav-dropdown-container" 

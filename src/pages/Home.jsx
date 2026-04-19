@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Film, Tv } from 'lucide-react';
 import { tmdbApi } from '../utils/tmdb';
 import { jikanApi } from '../utils/jikan';
+import { useSearch } from '../context/SearchContext';
 import MovieCard from '../components/MovieCard';
 import './Home.css';
 
@@ -10,7 +11,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('trending'); // trending, popular, top_rated
   const [mediaType, setMediaType] = useState('movie'); // 'movie' or 'anime'
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery, setSearchQuery } = useSearch();
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
@@ -50,8 +51,12 @@ const Home = () => {
         setLoading(true);
         try {
           if (mediaType === 'movie') {
-            const response = await tmdbApi.searchMovies(searchQuery);
-            setItems(response.data.results || []);
+            const response = await tmdbApi.searchMulti(searchQuery);
+            // Filter results to only movies and tv shows
+            const filteredResults = (response.data.results || []).filter(
+              item => item.media_type === 'movie' || item.media_type === 'tv'
+            );
+            setItems(filteredResults);
           } else {
             const response = await jikanApi.searchAnime(searchQuery);
             setItems(response.data.data || []);
@@ -72,19 +77,13 @@ const Home = () => {
   return (
     <div className="home-page animate-fade-in">
       <section className="hero-section text-center">
-        <div className="search-container" style={{ marginBottom: '1.5rem' }}>
-          <div className="search-input-wrapper">
-            <Search className="search-icon" size={20} />
-            <input 
-              type="text" 
-              placeholder={`Search for ${mediaType === 'movie' ? 'movies' : 'anime'} by title...`} 
-              className="search-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        {!isSearching && (
+          <div className="hero-text-content">
+            <h1 className="heading-xl">Discover Your Next Favorite</h1>
+            <p className="text-secondary" style={{ marginBottom: '2rem' }}>Browse through thousands of movies, series and anime.</p>
           </div>
-        </div>
-
+        )}
+        
         <div className="media-toggle-container">
           <div className="media-toggle">
             <button 
@@ -128,7 +127,7 @@ const Home = () => {
 
       {isSearching && (
         <h2 className="heading-md search-results-heading">
-          Search Results for "{searchQuery}" in {mediaType === 'movie' ? 'Movies' : 'Anime'}
+          Search Results for "{searchQuery}" in {mediaType === 'movie' ? 'Movies & Series' : 'Anime'}
         </h2>
       )}
 

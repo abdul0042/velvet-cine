@@ -5,7 +5,7 @@ import { tmdbApi, getImageUrl } from '../utils/tmdb';
 import { useAuth } from '../context/AuthContext';
 import './MovieDetail.css';
 
-const MovieDetail = () => {
+const MovieDetail = ({ isTV = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
@@ -16,10 +16,10 @@ const MovieDetail = () => {
     const fetchMovie = async () => {
       setLoading(true);
       try {
-        const response = await tmdbApi.getMovieDetails(id);
+        const response = isTV ? await tmdbApi.getTvDetails(id) : await tmdbApi.getMovieDetails(id);
         setMovie(response.data);
       } catch (error) {
-        console.error("Error fetching movie details:", error);
+        console.error(`Error fetching ${isTV ? 'TV' : 'movie'} details:`, error);
       } finally {
         setLoading(false);
       }
@@ -40,7 +40,7 @@ const MovieDetail = () => {
   if (!movie) {
     return (
       <div className="error-container">
-        <h2>Movie not found</h2>
+        <h2>{isTV ? 'TV Series' : 'Movie'} not found</h2>
         <button className="btn btn-primary" onClick={() => navigate('/')}>Back to Home</button>
       </div>
     );
@@ -51,9 +51,10 @@ const MovieDetail = () => {
   
   const backdropUrl = getImageUrl(movie.backdrop_path, 'original');
   const posterUrl = getImageUrl(movie.poster_path, 'w500');
-  const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
+  const title = movie.title || movie.name;
+  const releaseYear = (movie.release_date || movie.first_air_date) ? new Date(movie.release_date || movie.first_air_date).getFullYear() : 'N/A';
   
-  const director = movie.credits?.crew?.find(c => c.job === 'Director')?.name || 'Unknown';
+  const creator = isTV ? (movie.created_by?.[0]?.name || 'Unknown') : (movie.credits?.crew?.find(c => c.job === 'Director')?.name || 'Unknown');
   const cast = movie.credits?.cast?.slice(0, 5) || [];
   
   // Find trailer
@@ -77,14 +78,14 @@ const MovieDetail = () => {
         <div className="detail-content glass-panel">
           <div className="detail-poster">
             {posterUrl ? (
-              <img src={posterUrl} alt={movie.title} />
+              <img src={posterUrl} alt={title} />
             ) : (
-              <div className="no-poster"><Film size={48} /></div>
+              <div className="no-poster">{isTV ? <Tv size={48} /> : <Film size={48} />}</div>
             )}
           </div>
           
           <div className="detail-info">
-            <h1 className="detail-title">{movie.title}</h1>
+            <h1 className="detail-title">{title}</h1>
             
             <div className="detail-meta">
               <span className="meta-item">
@@ -114,11 +115,11 @@ const MovieDetail = () => {
                       <BookmarkMinus size={18} /> Remove from Watchlist
                     </button>
                   ) : (
-                    <button className="btn btn-secondary" onClick={() => addToWatchlist({...movie, media_type: 'movie'})}>
+                    <button className="btn btn-secondary" onClick={() => addToWatchlist({...movie, media_type: isTV ? 'tv' : 'movie'})}>
                       <BookmarkPlus size={18} /> Add to Watchlist
                     </button>
                   )}
-                  <button className="btn btn-primary" onClick={() => markAsWatched({...movie, media_type: 'movie'})}>
+                  <button className="btn btn-primary" onClick={() => markAsWatched({...movie, media_type: isTV ? 'tv' : 'movie'})}>
                     <CheckCircle2 size={18} /> Mark as Watched
                   </button>
                 </>
@@ -143,8 +144,8 @@ const MovieDetail = () => {
             
             <div className="detail-crew">
               <div className="crew-section">
-                <h4>Director</h4>
-                <p>{director}</p>
+                <h4>{isTV ? 'Created By' : 'Director'}</h4>
+                <p>{creator}</p>
               </div>
               
               {cast.length > 0 && (

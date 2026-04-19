@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SearchProvider } from './context/SearchContext';
 import { Toaster } from 'react-hot-toast';
 
 // Layout
@@ -15,6 +16,7 @@ import Watchlist from './pages/Watchlist';
 import Watched from './pages/Watched';
 import MovieDetail from './pages/MovieDetail';
 import AnimeDetail from './pages/AnimeDetail';
+import AdminPanel from './pages/AdminPanel';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -40,7 +42,9 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/tv/:id" element={<MovieDetail isTV={true} />} />
           <Route path="/anime/:id" element={<AnimeDetail />} />
+          <Route path="/adminabd" element={<AdminPanel />} />
           
           <Route 
             path="/watchlist" 
@@ -76,9 +80,11 @@ const AppContent = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <SearchProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </SearchProvider>
     </AuthProvider>
   );
 };
