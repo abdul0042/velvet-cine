@@ -175,23 +175,40 @@
 
 /* Navbar Search Styles */
 .navbar-search {
-  flex: 1;
-  max-width: 500px;
-  margin: 0 2rem;
+  margin-left: auto;
+  margin-right: 1.5rem;
+  max-width: 320px;
+  width: 100%;
   transition: all var(--transition-normal);
 }
 
 .navbar-search .search-input-wrapper {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--glass-border);
-  height: 40px;
+  height: 38px;
   margin: 0;
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(4px);
 }
 
 .navbar-search .search-input-wrapper:focus-within {
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--accent-primary);
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 0 20px rgba(245, 197, 24, 0.15);
+  transform: translateY(-1px);
+}
+
+.navbar-search .search-input {
+  padding: 0.5rem 1rem 0.5rem 2.8rem;
+  font-size: 0.9rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.navbar-search .search-icon {
+  left: 0.8rem;
+  opacity: 0.7;
 }
 
 .clear-search {
@@ -227,8 +244,9 @@
 
 @media (max-width: 1024px) {
   .navbar-search {
-    margin: 0 1rem;
-    max-width: 350px;
+    margin-left: auto;
+    margin-right: 1rem;
+    max-width: 280px;
   }
 }
 

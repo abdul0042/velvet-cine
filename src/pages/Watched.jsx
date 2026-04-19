@@ -4,7 +4,6 @@ import MovieCard from '../components/MovieCard';
 import StarRating from '../components/StarRating';
 import { CheckCircle2, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import './SharedLibrary.css';
 
 const WatchedCard = ({ movie, updateRating, removeMovie }) => {
@@ -75,6 +74,22 @@ const WatchedCard = ({ movie, updateRating, removeMovie }) => {
 const Watched = () => {
   const { library, updateWatchedRecord, removeFromWatched } = useAuth();
   const watched = library.watched || [];
+  const [filter, setFilter] = useState('all');
+
+  const filteredWatched = watched.filter(movie => {
+    if (filter === 'all') return true;
+    const isAnime = !!movie.mal_id || movie.media_type === 'anime';
+    const isTV = movie.media_type === 'tv';
+    const type = isAnime ? 'anime' : (isTV ? 'tv' : 'movie');
+    return type === filter;
+  });
+
+  const categories = [
+    { id: 'all', label: 'All' },
+    { id: 'movie', label: 'Movies' },
+    { id: 'tv', label: 'TV Shows' },
+    { id: 'anime', label: 'Anime' }
+  ];
 
   return (
     <div className="library-page animate-fade-in">
@@ -83,9 +98,21 @@ const Watched = () => {
         <p className="text-secondary">Movies you've completed and reviewed.</p>
       </div>
 
-      {watched.length > 0 ? (
+      <div className="library-filters">
+        {categories.map(cat => (
+          <button 
+            key={cat.id}
+            className={`filter-tab ${filter === cat.id ? 'active' : ''}`}
+            onClick={() => setFilter(cat.id)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {filteredWatched.length > 0 ? (
         <div className="watched-grid">
-          {watched.map(movie => (
+          {filteredWatched.map(movie => (
             <WatchedCard 
               key={movie.id} 
               movie={movie} 
@@ -97,10 +124,16 @@ const Watched = () => {
       ) : (
         <div className="empty-state">
           <CheckCircle2 className="empty-icon" size={64} />
-          <h2 className="heading-md">No watched movies yet</h2>
-          <p className="text-muted">Once you watch a movie, mark it as done to leave a rating and review!</p>
+          <h2 className="heading-md">
+            {filter === 'all' ? 'No watched movies yet' : `No ${filter}s watched yet`}
+          </h2>
+          <p className="text-muted">
+            {filter === 'all' 
+              ? 'Once you watch a movie, mark it as done to leave a rating and review!' 
+              : `You haven't marked any ${filter === 'tv' ? 'TV shows' : filter}s as watched yet.`}
+          </p>
           <Link to="/" className="btn btn-primary" style={{marginTop: '1.5rem'}}>
-            Discover Movies
+            Discover {filter === 'all' ? 'Movies' : filter.charAt(0).toUpperCase() + filter.slice(1)}
           </Link>
         </div>
       )}
