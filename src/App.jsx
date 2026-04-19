@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 
 // Layout
 import Navbar from './components/Navbar';
+import InstallBanner from './components/InstallBanner';
 
 // Pages
 import Home from './pages/Home';
@@ -67,6 +68,7 @@ const AppContent = () => {
           duration: 3000,
         }}
       />
+      <InstallBanner />
     </div>
   );
 };
