@@ -77,12 +77,7 @@ const Home = () => {
   return (
     <div className="home-page animate-fade-in">
       <section className="hero-section text-center">
-        {!isSearching && (
-          <div className="hero-text-content">
-            <h1 className="heading-xl">Discover Your Next Favorite</h1>
-            <p className="text-secondary" style={{ marginBottom: '2rem' }}>Browse through thousands of movies, series and anime.</p>
-          </div>
-        )}
+        {/* Hero text removed as requested */}
         
         <div className="media-toggle-container">
           <div className="media-toggle">
